@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Torcia</string>
+    <string name="flashToggle">Accendi/Spegni Flash</string>
+    <string name="flashToggleOn">Spegni</string>
+    <string name="flashToggleOff">Accendi</string>
+</resources>
