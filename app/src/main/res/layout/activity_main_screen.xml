@@ -30,20 +30,6 @@
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/flashToggleOff"
-            android:textColor="@android:color/white"
-            android:id="@+id/flashControlText"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
-            android:textSize="80dp"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:gravity="center" />
-
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/screenToggleOff"
             android:textColor="@android:color/white"
             android:id="@+id/screenControlText"

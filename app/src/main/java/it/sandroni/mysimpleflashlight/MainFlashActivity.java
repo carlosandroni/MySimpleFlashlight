@@ -25,11 +25,12 @@ public class MainFlashActivity extends Activity {
     Integer prevBright;
     SurfaceView preview;
     SurfaceHolder mHolder;
-    LinearLayout flashControl;
-    TextView tipText;
+    TextView flashControlText;
+    TextView screenControlText;
     Camera mCamera;
     Parameters parameters;
-    Boolean flashlightStatus = false;
+    Boolean flashLightStatus = false;
+    Boolean screenLightStatus = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,19 +46,26 @@ public class MainFlashActivity extends Activity {
             e.printStackTrace();
         }
 
-        setContentView(R.layout.activity_main_flash);
+        if (deviceHasFlashlight()) {
+            setContentView(R.layout.activity_main_flash);
+        } else {
+            setContentView(R.layout.activity_main_screen);
+        }
 
-        flashControl = (LinearLayout) findViewById(R.id.flashcontrol);
+        flashControlText = (TextView) findViewById(R.id.flashControlText);
+        screenControlText = (TextView) findViewById(R.id.screenControlText);
         preview = (SurfaceView) findViewById(R.id.preview);
         mHolder = preview.getHolder();
-        tipText = (TextView) findViewById(R.id.tipText);
-
-
-        flashControl.setOnClickListener(new LinearLayout.OnClickListener(){
-
+        flashControlText.setOnClickListener(new LinearLayout.OnClickListener() {
             @Override
-            public void onClick(View arg0) {
+            public void onClick(View v) {
                 toggleFlashLight();
+            }
+        });
+        screenControlText.setOnClickListener(new LinearLayout.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleScreenLight();
             }
         });
     }
@@ -75,7 +83,7 @@ public class MainFlashActivity extends Activity {
         setBrightness(prevBright);
 
         // Turn off the flashlight if api level < 14 as leaving it on would result in a FC
-        if (Integer.valueOf(Build.VERSION.SDK_INT) < 14 || flashlightStatus == false) {
+        if (Build.VERSION.SDK_INT < 14 || !flashLightStatus) {
             turnOffFlashLight();
 
             // Turn off the cam if it is on
@@ -103,7 +111,6 @@ public class MainFlashActivity extends Activity {
 
     /**
      * Set brightness to a desired value
-     * @param brightness
      */
     private void setBrightness(int brightness) {
         WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
@@ -115,10 +122,21 @@ public class MainFlashActivity extends Activity {
      * Toggle the flashlight on/off status
      */
     public void toggleFlashLight() {
-        if (flashlightStatus == false) { // Off, turn it on
+        if (flashLightStatus == false) { // Off, turn it on
             turnOnFlashLight();
         } else { // On, turn it off
             turnOffFlashLight();
+        }
+    }
+
+    /**
+     * Toggle the screenlight on/off status
+     */
+    public void toggleScreenLight() {
+        if (screenLightStatus == false) { // Off, turn it on
+            turnOnScreenLight();
+        } else { // On, turn it off
+            turnOffScreenLight();
         }
     }
 
@@ -151,16 +169,10 @@ public class MainFlashActivity extends Activity {
             mCamera.setParameters(parameters);
         }
 
-        // Set background color
-        flashControl.setBackgroundColor(Color.WHITE);
-        tipText.setTextColor(Color.BLACK);
-        tipText.setText(R.string.flashToggleOn);
-
-        // Set brightness to max
-        setBrightness(100);
+        flashControlText.setText(R.string.flashToggleOn);
 
         // Self awareness
-        flashlightStatus = true;
+        flashLightStatus = true;
     }
 
     /**
@@ -177,16 +189,50 @@ public class MainFlashActivity extends Activity {
             }
         }
 
+        flashControlText.setText(R.string.flashToggleOff);
+        // Self awareness
+        flashLightStatus = false;
+    }
+
+
+    /**
+     * Turn on the flashlight if the device has one.
+     * Also set the background colour to white and brightness to max.
+     */
+    public void turnOnScreenLight() {
+
         // Set background color
-        flashControl.setBackgroundColor(Color.BLACK);
-        tipText.setTextColor(Color.WHITE);
-        tipText.setText(R.string.flashToggleOff);
+        flashControlText.setBackgroundColor(Color.WHITE);
+        flashControlText.setTextColor(Color.BLACK);
+
+        screenControlText.setBackgroundColor(Color.WHITE);
+        screenControlText.setTextColor(Color.BLACK);
+        screenControlText.setText(R.string.screenToggleOn);
+
+        // Set brightness to max
+        setBrightness(100);
+
+        // Self awareness
+        screenLightStatus = true;
+    }
+
+    /**
+     * Turn off the flashlight if we find it to be on.
+     * Also set the background to black and revert to original brightness
+     */
+    public void turnOffScreenLight() {
+        // Set background color
+        flashControlText.setBackgroundColor(Color.BLACK);
+        flashControlText.setTextColor(Color.WHITE);
+        screenControlText.setBackgroundColor(Color.BLACK);
+        screenControlText.setTextColor(Color.WHITE);
+        screenControlText.setText(R.string.screenToggleOff);
 
         // Revert to original brightness
         setBrightness(prevBright);
 
         // Self awareness
-        flashlightStatus = false;
+        screenLightStatus = false;
     }
 
 }
